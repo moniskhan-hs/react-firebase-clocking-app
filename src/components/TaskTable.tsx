@@ -100,9 +100,15 @@ const TaskTable = () => {
       headerName: "Screenshots",
       width: 150,
       renderCell: (params) => (
+        <Button sx={{
+          cursor:isRunning?'not-allowed':'pointer',
+          color: isRunning ? "blue":'GrayText'
+        }}  disabled ={isRunning}>
+
         <Link to={`task/${params.row.id}`}>
           <Logout />
         </Link>
+        </Button>
       ),
     },
   ];
