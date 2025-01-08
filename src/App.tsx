@@ -2,7 +2,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { getDatabase, onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Testing from "./components/Testing";
 import { auth } from "./firebase";
 import AdminHome from "./pages/admin/Admin";
 import Home from "./pages/Home";
