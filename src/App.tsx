@@ -41,8 +41,6 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<AdminHome users={users} />} />
-        <Route path="/localtest" element={<AdminHome users={users} />} />
-        <Route path="/testing" element={<Testing />} />
         <Route path="/task/:id" element={<SingleTaskPage />} />
       </Routes>
     </Router>

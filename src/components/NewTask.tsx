@@ -4,6 +4,8 @@ import { child, get, getDatabase, push, ref } from "firebase/database";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { userTaskUpdated } from "../redux/reducers/user";
+import AdminHome from "../pages/admin/Admin";
+import { Link } from "react-router-dom";
 type Props = {
   user: User | null;
 };
@@ -89,6 +91,15 @@ const NewTask = ({ user }: Props) => {
           Create +
         </Button>
       </form>
+<Link to={'/admin'}>
+ <Button variant="contained" sx={{
+   textTransform: "none",
+  }} >
+  Admin
+ 
+ </Button>
+   </Link>
+
     </Stack>
   );
 };
