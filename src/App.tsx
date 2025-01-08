@@ -1,11 +1,11 @@
 import { onAuthStateChanged } from "firebase/auth";
+import { getDatabase, onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { auth } from "./firebase";
 import AdminHome from "./pages/admin/Admin";
 import Home from "./pages/Home";
 import SingleTaskPage from "./pages/SingleTaskPage";
-import { getDatabase, onValue, ref } from "firebase/database";
 
 const App = () => {
   const [users, setUsers] = useState();
@@ -27,6 +27,7 @@ const App = () => {
     const unsubscribe = onValue(dbRef, (snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
+        console.log('all users:', data)
         setUsers(data);
       } else {
         console.log("No users available");
