@@ -12,6 +12,7 @@ const App = () => {
   useEffect(() => {
     // user = firebase retured user
     onAuthStateChanged(auth, async (user) => {
+    console.log('user:', user)
     
     });
   }, []);

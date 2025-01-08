@@ -2,10 +2,11 @@ import { Circle } from "@mui/icons-material";
 import { Avatar, Box, Stack } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
+type Props = {
+  users: unknown;
+};
 
-
-const AdminHome = ({users}) => {
-  
+const AdminHome = ({ users }: Props) => {
   const columns: GridColDef<(typeof rows)[number]>[] = [
     { field: "id", headerName: "ID", width: 200 },
     {
@@ -60,13 +61,17 @@ const AdminHome = ({users}) => {
 
   // -------------------------------------- Table rows---------------------------------------
 
-  const rows = Object.entries(users || {}).map(([key, value]) => ({
-    id: key,
-    image: value.photo,
-    userName: value.name,
-    totalClocking: value.totalClocking,
-    status: value.isActive,
-  }));
+  const rows = Object.entries(users || {}).map(([key, value]) => {
+ const row = value as User
+
+    return {
+      id: key,
+      image: row.photo,
+      userName: row.name,
+      totalClocking: row.totalClocking,
+      status: row.isActive,
+    };
+  });
 
   return (
     <Box width={"100%"} padding={"1.5rem 5rem"}>

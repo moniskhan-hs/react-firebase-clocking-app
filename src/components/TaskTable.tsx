@@ -1,43 +1,34 @@
-import { Logout, Screenshot, Timer, TimerOff } from "@mui/icons-material";
+import { Logout, Timer, TimerOff } from "@mui/icons-material";
 import {
   Avatar,
   Box,
   Button,
-  IconButton,
-  Stack,
-  Typography,
+  IconButton
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { getAuth } from "firebase/auth";
 import {
   child,
-  DataSnapshot,
   get,
   getDatabase,
-  onValue,
   push,
   ref,
-  set,
-  update,
+  update
 } from "firebase/database";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   resetCounter,
   startCounter,
-  stopCounter,
-  updateCounter,
+  updateCounter
 } from "../redux/reducers/counter";
 import { updateTotalClocking } from "../redux/reducers/totalClocking";
 import { setUser } from "../redux/reducers/user";
 import NewTask from "./NewTask";
-import { useEffect, useRef, useState } from "react";
-import { createFileName, useScreenshot } from "use-react-screenshot";
-import { Link } from "react-router-dom";
-import SingleTaskPage from "../pages/SingleTaskPage";
 
 const TaskTable = () => {
   const [isSharing, setIsSharing] = useState(false);
-  const [imageList, setImageList] = useState<string[]>([]);
 
   const dispatch = useDispatch();
 
@@ -81,7 +72,7 @@ const TaskTable = () => {
             <Button
               variant="text"
               onClick={() =>
-                handleTimerStop(params.row.id, params.row.taskName)
+                handleTimerStop(params.row.id)
               }
             >
               <TimerOff />
@@ -151,7 +142,7 @@ const TaskTable = () => {
 
   //--------------------------- Handle to stop the timer---------------------------
 
-  const handleTimerStop = async (rowId: string, taskName: string) => {
+  const handleTimerStop = async (rowId: string) => {
     // dispatch(stopCounter());
     console.log("counter " + counter);
 
@@ -161,7 +152,7 @@ const TaskTable = () => {
     const userId = auth?.currentUser?.uid;
     const tasksRef = ref(db, `users/${userId}/tasks/${rowId}`);
     update(tasksRef, {
-      // title: taskName,
+      // title: taskName,  -- was a prop 
       clocking: counter,
     })
       .then(() => console.log(`clocking updated`))
@@ -173,8 +164,9 @@ const TaskTable = () => {
       if (snapshot.exists()) {
         dispatch(setUser(snapshot.val())); // Store the user data in redux store
         if (auth && userId) {
-          updateOfTotalClocking(userId, snapshot.val());
-          console.log("snapshot.val():", snapshot.val());
+          const user  = snapshot.val()
+          updateOfTotalClocking(userId, user);
+          console.log("snapshot.val():", user);
         }
       } else {
         console.log("no data available");
@@ -189,9 +181,10 @@ const TaskTable = () => {
   // -------------------------------------- METHODS --------------------------------------
 
   //-------------------------------- method to auto update the total clocking
-  const updateOfTotalClocking = (userId: string, updateduser: DataSnapshot) => {
-    const total = Object.values(updateduser.tasks || {}).reduce((sum, task) => {
-      return sum + task.clocking; // Ensure clocking exists
+  const updateOfTotalClocking = (userId: string, updateduser:User ) => {
+    const total = Object.values(updateduser.tasks || {}).reduce((sum:number, task) => {
+       const updatedTask = task as TaskType
+      return sum + updatedTask?.clocking;  // Ensure clocking exists
     }, 0);
 
     // update the totalclocking value in state
@@ -255,10 +248,8 @@ const TaskTable = () => {
         context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
         const image = canvas.toDataURL("image/png");
         // upload image on firebase
-
         uploadscreenshot(image);
 
-        setImageList((prev) => [...prev, image]); // Save the screenshot
       }
     }
   };
@@ -298,6 +289,7 @@ const TaskTable = () => {
         clearInterval(intervalRef.current);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSharing]);
 
   return (

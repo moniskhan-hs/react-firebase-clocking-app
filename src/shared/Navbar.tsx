@@ -1,4 +1,4 @@
-import { Logout, Sync } from "@mui/icons-material";
+import { Logout } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
@@ -14,7 +14,7 @@ import { child, get, getDatabase, ref, set } from "firebase/database";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { auth } from "../firebase";
-import { increament, stopCounter } from "../redux/reducers/counter";
+import { increament } from "../redux/reducers/counter";
 import { setUser, userExist, userNotExist } from "../redux/reducers/user";
 
 const Navbar = () => {
@@ -50,12 +50,6 @@ const Navbar = () => {
       }
     };
   }, [dispatch, isRunning]);
-
-  //  ----------------------- Handle for stop the timer--------------------
-
-  const handleStopTimer = () => {
-    dispatch(stopCounter());
-  };
 
   //  ----------------------- Handle for login-------------------
 

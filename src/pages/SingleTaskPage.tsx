@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { getDatabase, onValue, ref } from "firebase/database";
 import { getAuth } from "firebase/auth";
-import { useSelector } from "react-redux";
+import { getDatabase, onValue, ref } from "firebase/database";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const SingleTaskPage = () => {
@@ -30,6 +29,7 @@ const SingleTaskPage = () => {
 
     // Cleanup listener
     return () => unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -40,14 +40,17 @@ const SingleTaskPage = () => {
         }}
       >
         <h2>Captured Screenshots:</h2>
-        {Object.entries(screenshotsList || {}).map(([key,value]) => (
-          <img
-            key={key}
-            src={value.url}
-            alt={`Screenshot ${key}`}
-            style={{ margin: "10px", width: "300px" }}
-          />
-        ))}
+        {Object.entries(screenshotsList || {}).map(([key, value]) => {
+          const screenshot = value as { url: string };
+          return (
+            <img
+              key={key}
+              src={screenshot.url}
+              alt={`Screenshot ${key}`}
+              style={{ margin: "10px", width: "300px" }}
+            />
+          );
+        })}
       </div>
     </div>
   );
