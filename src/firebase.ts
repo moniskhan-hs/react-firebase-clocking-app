@@ -12,9 +12,11 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCK,
   messagingSenderId:import.meta.env.VITE_FIREBASE_MSG_SEND_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  databaseURL:import.meta.env.VITE_FIREBASE_DATABASE_URL
+  databaseURL:import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUR_ID
 };
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app)
+

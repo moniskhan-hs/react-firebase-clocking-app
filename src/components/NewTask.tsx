@@ -2,6 +2,7 @@ import { Button, Stack, TextField } from "@mui/material";
 import { getAuth } from "firebase/auth";
 import { child, get, getDatabase, push, ref } from "firebase/database";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { userTaskUpdated } from "../redux/reducers/user";
@@ -29,13 +30,16 @@ const NewTask = ({ user }: Props) => {
           clocking: 0,
         })
           .then(() => {
-            alert("Task added successfully");
+            console.log("Task added successfully");
+        toast.success('New Task Added');
+
           })
           .catch((err) => console.log(err)); 
          
           updateUserTasks(userId); // Calling [Handle to update the user tasks state ]
       } else {
-        alert("Please login first.");
+        toast.error('Please login first')
+        console.log("Please login first.");
       }
     } catch (error) {
       console.log("error:", error);

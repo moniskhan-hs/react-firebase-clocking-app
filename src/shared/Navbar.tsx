@@ -12,10 +12,13 @@ import {
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { child, get, getDatabase, ref, set } from "firebase/database";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { auth } from "../firebase";
-import { increament } from "../redux/reducers/counter";
+import { increament, resetCounter, stopCounter } from "../redux/reducers/counter";
+import { resetTotalClocking, updateTotalClocking } from "../redux/reducers/totalClocking";
 import { setUser, userExist, userNotExist } from "../redux/reducers/user";
+import { convertIntohoursAndMinuts } from "../utils/features";
 
 const Navbar = () => {
   const [isDailogOpen, setIsDailogOpen] = useState(false);
@@ -61,12 +64,20 @@ const Navbar = () => {
       if (user) {
         // need to check if user data is stored in database already or not
         // -------------------- get user information from data bse -----------------------
-
+        toast.success('Login Success');
+        
         const dbRef = ref(getDatabase());
         get(child(dbRef, `users/${user?.uid}`))
           .then((snapshot) => {
             if (snapshot.exists()) {
-              dispatch(setUser(snapshot.val())); // Store the user data in redux store
+              // Store the user data in redux store
+              dispatch(setUser(snapshot.val()));
+// update the total clocking state
+
+             dispatch(updateTotalClocking(snapshot.val().totalClocking
+            ));
+            
+           
             } else {
               console.log("No data available");
               const newUser = {
@@ -78,7 +89,7 @@ const Navbar = () => {
                 isActive: false,
               };
               dispatch(userExist(newUser)); // Store the user data in redux store
-
+              
               StoreUserinFirebase(
                 // Calling [handle to store the data in firebase]
                 user.uid,
@@ -105,7 +116,13 @@ const Navbar = () => {
       await signOut(auth);
       // toast.success("sign out successfully")
       dispatch(userNotExist());
+      dispatch(stopCounter())
+      dispatch(resetCounter())
+      dispatch(resetTotalClocking())  
+      
       setIsDailogOpen(false);
+      toast.error('user logout');
+
     } catch (error) {
       console.log("error:", error);
       // toast.error("sign out failed")
@@ -123,13 +140,14 @@ const Navbar = () => {
   ) => {
     const db = getDatabase();
     set(ref(db, "users/" + userId), {
+      id:userId,
       name,
       email,
       photo,
       totalClocking: 0,
       isActive: false,
     })
-      .then(() => alert("data save successfully"))
+      .then(() => console.log("data save successfully"))
       .catch((err) => console.log(err));
   };
 
@@ -181,13 +199,14 @@ const Navbar = () => {
                   }}
                 >
                   <span>Total Clocking</span>
-                  {totalClocking}
+                  {/* {totalClocking} */}
+                  {convertIntohoursAndMinuts(totalClocking)}
                 </Button>
               </Stack>
 
               {/* ---------------------  Timer's value ---------------------- */}
 
-              <span> {counter} </span>
+              <span>  {convertIntohoursAndMinuts(counter)} </span>
 
               {/* ---------------------  user avatar ---------------------- */}
               {user ? (
@@ -195,7 +214,7 @@ const Navbar = () => {
                   <Avatar
                     sx={{ bgcolor: "white", color: "black", cursor: "pointer" }}
                     src={user?.photo}
-                    onClick={() => setIsDailogOpen(pre=>!pre)}
+                    onClick={() => setIsDailogOpen((pre) => !pre)}
                   />
                   <dialog
                     open={isDailogOpen}
