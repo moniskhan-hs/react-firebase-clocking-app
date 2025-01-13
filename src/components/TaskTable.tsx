@@ -21,7 +21,6 @@ import NewTask from "./NewTask";
 
 const TaskTable = () => {
   const [isSharing, setIsSharing] = useState(false);
-  const [selectedRow,setSelectedRow]= useState<string>()
 
   const dispatch = useDispatch();
 
@@ -131,7 +130,6 @@ const TaskTable = () => {
   //--------------------------- Handle to start the timer---------------------------
   const handleTimerStart = async (rowId: string, currentClocking: number) => {
     try {
-      setSelectedRow(rowId)
       const auth = getAuth();
       const userId = auth?.currentUser?.uid;
       const userRef = ref(getDatabase(), `users/${userId}`);
