@@ -21,6 +21,7 @@ import NewTask from "./NewTask";
 
 const TaskTable = () => {
   const [isSharing, setIsSharing] = useState(false);
+  const [selectedRow,setSelectedRow]= useState<string>()
 
   const dispatch = useDispatch();
 
@@ -130,6 +131,7 @@ const TaskTable = () => {
   //--------------------------- Handle to start the timer---------------------------
   const handleTimerStart = async (rowId: string, currentClocking: number) => {
     try {
+      setSelectedRow(rowId)
       const auth = getAuth();
       const userId = auth?.currentUser?.uid;
       const userRef = ref(getDatabase(), `users/${userId}`);
@@ -159,7 +161,7 @@ const TaskTable = () => {
       await update(userRef, { isActive: true });
       console.log("user is online now");
 
-      startScreenShare();
+      startScreenShare(rowId);
     } catch (error) {
       console.log("error:", error);
     }
@@ -241,12 +243,23 @@ const TaskTable = () => {
     audio: false,
   };
 
-  const startScreenShare = async () => {
+  const startScreenShare = async (rowId :string) => {
     try {
       console.log("screen sharing on .......");
       const stream = await navigator.mediaDevices.getDisplayMedia(
         displayMediaOptions
       );
+
+      // need to seprately make the state of activerowId and reste it after that
+      console.log('activeRowId in stream:', rowId)
+      stream.getVideoTracks()[0].onended = () => {
+        console.log('activeRowId: in stream', rowId)
+        if(rowId){
+          stopScreenShare()
+        }
+      
+      };
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
@@ -255,6 +268,10 @@ const TaskTable = () => {
       console.error("Error starting screen sharing:", err);
     }
   };
+
+
+
+
 
   const stopScreenShare = () => {
     console.log("screen sharing off .......");

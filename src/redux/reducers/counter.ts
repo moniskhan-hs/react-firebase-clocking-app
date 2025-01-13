@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { act } from "react";
 
 const initialState: CounterInitState = {
   activeRowId: null,
@@ -20,6 +21,7 @@ export const counterReducer = createSlice({
     startCounter: (state, action) => {
       state.activeRowId = action.payload;
       state.isRunning = true;
+      console.log('activeRowId state updated',action.payload)
     },
 
     updateCounter: (state, action) => {
@@ -34,6 +36,7 @@ export const counterReducer = createSlice({
       state.isRunning = false;
       state.counter = 0;
       state.activeRowId = null;
+      console.log('bhai acitve row id yaha pr null ho gayi')
     },
   },
 });
