@@ -241,7 +241,7 @@ const TaskTable = () => {
     audio: false,
   };
 
-  const startScreenShare = async (rowId :string) => {
+  const startScreenShare = async (rowId: string) => {
     try {
       console.log("screen sharing on .......");
       const stream = await navigator.mediaDevices.getDisplayMedia(
@@ -249,13 +249,12 @@ const TaskTable = () => {
       );
 
       // need to seprately make the state of activerowId and reste it after that
-      console.log('activeRowId in stream:', rowId)
+      console.log("activeRowId in stream:", rowId);
       stream.getVideoTracks()[0].onended = () => {
-        console.log('activeRowId: in stream', rowId)
-        if(rowId){
-          stopScreenShare()
+        console.log("activeRowId: in stream", rowId);
+        if (rowId) {
+          stopScreenShare();
         }
-      
       };
 
       if (videoRef.current) {
@@ -266,10 +265,6 @@ const TaskTable = () => {
       console.error("Error starting screen sharing:", err);
     }
   };
-
-
-
-
 
   const stopScreenShare = () => {
     console.log("screen sharing off .......");
@@ -382,8 +377,6 @@ const TaskTable = () => {
           console.log("active row id" + activeRowId);
           console.log("bhai user id hi nahi hai==============");
         }
-
-        // updateOfTotalClocking(user?.id,user)
       }
     }
 

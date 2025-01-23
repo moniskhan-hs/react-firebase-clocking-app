@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { auth } from "./firebase";
+import useGetuser from "./hooks/useGetuser";
 import { useHandleBeforeUnload } from "./hooks/usehandleBeforeHook";
 import AdminHome from "./pages/admin/Admin";
+import LoginPage from "./pages/auth/LoginPage";
 import Home from "./pages/Home";
 import SingleTaskPage from "./pages/SingleTaskPage";
-import useGetuser from "./hooks/useGetuser";
 
 const App = () => {
   useHandleBeforeUnload();
@@ -52,6 +53,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/admin" element={<AdminHome users={users} />} />
         <Route path="/task/:id" element={<SingleTaskPage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
       <Toaster position="top-right" />
     </Router>

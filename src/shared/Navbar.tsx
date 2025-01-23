@@ -15,8 +15,15 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { auth } from "../firebase";
-import { increament, resetCounter, stopCounter } from "../redux/reducers/counter";
-import { resetTotalClocking, updateTotalClocking } from "../redux/reducers/totalClocking";
+import {
+  increament,
+  resetCounter,
+  stopCounter,
+} from "../redux/reducers/counter";
+import {
+  resetTotalClocking,
+  updateTotalClocking,
+} from "../redux/reducers/totalClocking";
 import { setUser, userExist, userNotExist } from "../redux/reducers/user";
 import { convertIntohoursAndMinuts } from "../utils/features";
 
@@ -56,7 +63,7 @@ const Navbar = () => {
 
   //  ----------------------- Handle for login-------------------
 
-  const handleLoginWithGoogle = async () => {
+  const handleLoginWithFirebaseGoogle = async () => {
     try {
       const provider = new GoogleAuthProvider();
       const { user } = await signInWithPopup(auth, provider);
@@ -64,20 +71,17 @@ const Navbar = () => {
       if (user) {
         // need to check if user data is stored in database already or not
         // -------------------- get user information from data bse -----------------------
-        toast.success('Login Success');
-        
+        toast.success("Login Success");
+
         const dbRef = ref(getDatabase());
         get(child(dbRef, `users/${user?.uid}`))
           .then((snapshot) => {
             if (snapshot.exists()) {
               // Store the user data in redux store
               dispatch(setUser(snapshot.val()));
-// update the total clocking state
+              // update the total clocking state
 
-             dispatch(updateTotalClocking(snapshot.val().totalClocking
-            ));
-            
-           
+              dispatch(updateTotalClocking(snapshot.val().totalClocking));
             } else {
               console.log("No data available");
               const newUser = {
@@ -89,7 +93,7 @@ const Navbar = () => {
                 isActive: false,
               };
               dispatch(userExist(newUser)); // Store the user data in redux store
-              
+
               StoreUserinFirebase(
                 // Calling [handle to store the data in firebase]
                 user.uid,
@@ -116,13 +120,12 @@ const Navbar = () => {
       await signOut(auth);
       // toast.success("sign out successfully")
       dispatch(userNotExist());
-      dispatch(stopCounter())
-      dispatch(resetCounter())
-      dispatch(resetTotalClocking())  
-      
-      setIsDailogOpen(false);
-      toast.error('user logout');
+      dispatch(stopCounter());
+      dispatch(resetCounter());
+      dispatch(resetTotalClocking());
 
+      setIsDailogOpen(false);
+      toast.error("user logout");
     } catch (error) {
       console.log("error:", error);
       // toast.error("sign out failed")
@@ -140,7 +143,7 @@ const Navbar = () => {
   ) => {
     const db = getDatabase();
     set(ref(db, "users/" + userId), {
-      id:userId,
+      id: userId,
       name,
       email,
       photo,
@@ -206,7 +209,7 @@ const Navbar = () => {
 
               {/* ---------------------  Timer's value ---------------------- */}
 
-              <span>  {convertIntohoursAndMinuts(counter)} </span>
+              <span> {convertIntohoursAndMinuts(counter)} </span>
 
               {/* ---------------------  user avatar ---------------------- */}
               {user ? (
@@ -233,7 +236,7 @@ const Navbar = () => {
               ) : (
                 <Typography
                   sx={{ color: "white", cursor: "pointer" }}
-                  onClick={handleLoginWithGoogle}
+                  onClick={handleLoginWithFirebaseGoogle}
                 >
                   Login
                 </Typography>
