@@ -1,10 +1,31 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Facebook, Google } from "@mui/icons-material";
+import { Box, Button, Stack } from "@mui/material";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { FacebookAuthProvider } from "firebase/auth";
 import loginImage from "../../assets/MHD_Login_img.jpg";
-import firebaseLogo from "../../assets/firebase_logo.png";
+import { auth } from "../../firebase";
 
 const LoginPage = () => {
+  const googleProvider = new GoogleAuthProvider();
+  const facebookProvider = new FacebookAuthProvider();
 
+  const handlSignWithFacebook = async () => {
+    try {
+      const { user } = await signInWithPopup(auth, facebookProvider);
+      console.log("user:", user);
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      const { user } = await signInWithPopup(auth, googleProvider);
+      console.log("Google Sign-In Success:", user);
+    } catch (error) {
+      console.error("Google Sign-In Error:", error.message);
+    }
+  };
 
   return (
     <Box
@@ -42,42 +63,43 @@ const LoginPage = () => {
         }}
       >
         <Stack
-          direction={"row"}
-          sx={{
-            alignItems: "center",
-            border: "1px solid #ff9100",
-            padding: "0.75rem 2.3rem",
-            borderRadius: "1.5rem",
-            cursor: "pointer",
-          }}
-          // your handle for login which you have used in navbar component [ handleLoginWithFirebaseGoogle - 66]
-        //   onClick={handleLoginWithGoogle}
+          spacing={2}
+          direction="column"
+          alignItems="center"
+          sx={{ marginTop: 4 }}
         >
-          <Typography
-            variant="body2"
+          {/* Google Sign-In Button */}
+          <Button
+            variant="outlined"
+            startIcon={<Google />}
             sx={{
-              fontSize: "1.2rem",
+              backgroundColor: "white",
+              color: "black",
+              border: "1px solid lightgray",
+              textTransform: "none",
+              width: "250px",
+              height: "50px",
             }}
+            onClick={handleGoogleSignIn}
           >
-            Login with
-          </Typography>
-          <img
-            src={firebaseLogo}
-            alt="firebaselog"
-            style={{
-              width: "1.7rem",
-            }}
-          />
+            Sign in
+          </Button>
 
-          <Typography
-            variant="body2"
+          {/* Facebook Login Button */}
+          <Button
+            variant="contained"
+            startIcon={<Facebook />}
             sx={{
-              fontSize: "1.2rem",
-              fontWeight: "bold",
+              backgroundColor: "#1877F2",
+              color: "white",
+              textTransform: "none",
+              width: "250px",
+              height: "50px",
             }}
+            onClick={handlSignWithFacebook}
           >
-            Firebase
-          </Typography>
+            Log in with Facebook
+          </Button>
         </Stack>
       </Box>
     </Box>
