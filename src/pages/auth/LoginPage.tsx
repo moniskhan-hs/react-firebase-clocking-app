@@ -30,11 +30,7 @@ const LoginPage = () => {
   console.log("setLoading:", setLoading);
   const [result, setResult] = useState<ConfirmationResult | null>(null);
   const [user, setUser] = useState<UserCredential | undefined>();
-  const [reCaptcha,setReCaptcha]=useState<RecaptchaVerifier>()
-
-
-
-
+  const [reCaptcha, setReCaptcha] = useState<RecaptchaVerifier>();
 
   const googleProvider = new GoogleAuthProvider();
   const facebookProvider = new FacebookAuthProvider();
@@ -57,21 +53,15 @@ const LoginPage = () => {
     }
   };
 
-
- useEffect(()=>{
-  const reCaptcha = new RecaptchaVerifier(
-    auth,
-    "recaptcha-container", 
-    {
+  useEffect(() => {
+    const reCaptcha = new RecaptchaVerifier(auth, "recaptcha-container", {
       size: "normal",
       callback: (response: string) => {
         console.log("reCAPTCHA verified:", response);
       },
-    }
-  );
-  setReCaptcha(reCaptcha)
-
- },[])
+    });
+    setReCaptcha(reCaptcha);
+  }, []);
 
   const sendOtp = async () => {
     const newPhoneNumber = phoneNumber.startsWith("+")
@@ -84,7 +74,7 @@ const LoginPage = () => {
     }
 
     try {
-     if(reCaptcha)  reCaptcha.render()
+      if (reCaptcha) reCaptcha.render();
       const confirmationResult = await signInWithPhoneNumber(
         auth,
         newPhoneNumber,
@@ -97,8 +87,7 @@ const LoginPage = () => {
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again.");
-      if(reCaptcha) reCaptcha.clear()
-
+      if (reCaptcha) reCaptcha.clear();
     }
   };
 
@@ -111,18 +100,13 @@ const LoginPage = () => {
       console.log("userLoginSuccess:", userLoginSuccess);
       toast.success("user login successfully");
       setUser(userLoginSuccess);
-      reCaptcha?.clear()
+      reCaptcha?.clear();
     } catch (error) {
       console.log("error:", error);
       toast.error("Invalid OTP");
-     reCaptcha?.clear()
+      reCaptcha?.clear();
     }
   };
-
-
-
- 
-
 
   return (
     <Box
@@ -202,18 +186,15 @@ const LoginPage = () => {
 
           <Box
             sx={{
-              width: 400,
+              // width: 400,
+              width: "250px",
               margin: "50px auto",
-              padding: 3,
-              boxShadow: 3,
+              // padding: 3,
+              // boxShadow: 3,
               borderRadius: 2,
               textAlign: "center",
             }}
           >
-            <Typography variant="h5" sx={{ mb: 2 }}>
-              Phone Authentication
-            </Typography>
-
             {user ? (
               <Typography>User login Successfully</Typography>
             ) : !result ? (
