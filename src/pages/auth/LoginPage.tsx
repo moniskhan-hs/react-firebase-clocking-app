@@ -16,7 +16,7 @@ import {
   signInWithPopup,
   UserCredential,
 } from "firebase/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import loginImage from "../../assets/MHD_Login_img.jpg";
 import { auth } from "../../firebase";
@@ -30,7 +30,7 @@ const LoginPage = () => {
   console.log("setLoading:", setLoading);
   const [result, setResult] = useState<ConfirmationResult | null>(null);
   const [user, setUser] = useState<UserCredential | undefined>();
- 
+  const [reCaptcha,setReCaptcha]=useState<RecaptchaVerifier>()
 
 
 
@@ -57,6 +57,22 @@ const LoginPage = () => {
     }
   };
 
+
+ useEffect(()=>{
+  const reCaptcha = new RecaptchaVerifier(
+    auth,
+    "recaptcha-container", 
+    {
+      size: "normal",
+      callback: (response: string) => {
+        console.log("reCAPTCHA verified:", response);
+      },
+    }
+  );
+  setReCaptcha(reCaptcha)
+
+ },[])
+
   const sendOtp = async () => {
     const newPhoneNumber = phoneNumber.startsWith("+")
       ? phoneNumber
@@ -67,18 +83,8 @@ const LoginPage = () => {
       return;
     }
 
-    const reCaptcha = new RecaptchaVerifier(
-      auth,
-      "recaptcha-container", // ID of the DOM element for reCAPTCHA
-      {
-        size: "normal", // Or "normal" if you want to show it visibly
-        callback: (response: string) => {
-          console.log("reCAPTCHA verified:", response);
-        },
-      }
-    );
     try {
-      reCaptcha.render()
+     if(reCaptcha)  reCaptcha.render()
       const confirmationResult = await signInWithPhoneNumber(
         auth,
         newPhoneNumber,
@@ -91,7 +97,7 @@ const LoginPage = () => {
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again.");
-      reCaptcha.clear()
+      if(reCaptcha) reCaptcha.clear()
 
     }
   };
@@ -105,9 +111,11 @@ const LoginPage = () => {
       console.log("userLoginSuccess:", userLoginSuccess);
       toast.success("user login successfully");
       setUser(userLoginSuccess);
+      reCaptcha?.clear()
     } catch (error) {
       console.log("error:", error);
       toast.error("Invalid OTP");
+     reCaptcha?.clear()
     }
   };
 
