@@ -71,7 +71,7 @@ const LoginPage = () => {
       auth,
       "recaptcha-container", // ID of the DOM element for reCAPTCHA
       {
-        size: "invisible", // Or "normal" if you want to show it visibly
+        size: "normal", // Or "normal" if you want to show it visibly
         callback: (response: string) => {
           console.log("reCAPTCHA verified:", response);
         },
@@ -79,7 +79,6 @@ const LoginPage = () => {
     );
     try {
       reCaptcha.render()
-      console.log("reCaptcha:", reCaptcha);
       const confirmationResult = await signInWithPhoneNumber(
         auth,
         newPhoneNumber,
