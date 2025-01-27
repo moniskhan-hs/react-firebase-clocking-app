@@ -75,15 +75,17 @@ const LoginPage = () => {
       );
       reCaptcha.render();
       console.log("reCaptcha:", reCaptcha);
-      const confirmationResult = await signInWithPhoneNumber(
-        auth,
-        newPhoneNumber,
-        reCaptcha
-      );
-      console.log("confirmationResult:", confirmationResult);
-      setVerificationId(confirmationResult.verificationId);
-      alert("OTP sent!");
-      setResult(confirmationResult); // user is set
+      signInWithPhoneNumber(auth, newPhoneNumber, reCaptcha)
+        .then((confirmationResult) => {
+          console.log("confirmationResult:", confirmationResult);
+          setVerificationId(confirmationResult.verificationId);
+          alert("OTP sent!");
+          setResult(confirmationResult); // user is set
+        })
+        .catch((err) => {
+          reCaptcha.clear();
+          console.log("err:", err);
+        });
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again.");
@@ -92,13 +94,16 @@ const LoginPage = () => {
 
   // Verify OTP
   const verifyOtp = async () => {
+    if (otp == "") return toast.error("Please Enter the OTP");
+
     try {
       const userLoginSuccess = await result?.confirm(otp);
       console.log("userLoginSuccess:", userLoginSuccess);
       toast.success("user login successfully");
-      setUser(userLoginSuccess)
+      setUser(userLoginSuccess);
     } catch (error) {
       console.log("error:", error);
+      toast.error("Invalid OTP");
     }
   };
 
