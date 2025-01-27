@@ -16,7 +16,7 @@ import {
   signInWithPopup,
   UserCredential,
 } from "firebase/auth";
-import {useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import loginImage from "../../assets/MHD_Login_img.jpg";
 import { auth } from "../../firebase";
@@ -89,10 +89,11 @@ const LoginPage = () => {
       setVerificationId(confirmationResult.verificationId);
       alert("OTP sent!");
       setResult(confirmationResult); // user is set
-      reCaptcha.clear()
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again.");
+      reCaptcha.render()
+
     }
   };
 
