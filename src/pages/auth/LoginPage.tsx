@@ -67,17 +67,17 @@ const LoginPage = () => {
       return;
     }
 
+    const reCaptcha = new RecaptchaVerifier(
+      auth,
+      "recaptcha-container", // ID of the DOM element for reCAPTCHA
+      {
+        size: "invisible", // Or "normal" if you want to show it visibly
+        callback: (response: string) => {
+          console.log("reCAPTCHA verified:", response);
+        },
+      }
+    );
     try {
-      const reCaptcha = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container", // ID of the DOM element for reCAPTCHA
-        {
-          size: "invisible", // Or "normal" if you want to show it visibly
-          callback: (response: string) => {
-            console.log("reCAPTCHA verified:", response);
-          },
-        }
-      );
       reCaptcha.render()
       console.log("reCaptcha:", reCaptcha);
       const confirmationResult = await signInWithPhoneNumber(
@@ -92,7 +92,7 @@ const LoginPage = () => {
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again.");
-      reCaptcha.render()
+      reCaptcha.clear()
 
     }
   };
