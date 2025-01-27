@@ -16,7 +16,7 @@ import {
   signInWithPopup,
   UserCredential,
 } from "firebase/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import loginImage from "../../assets/MHD_Login_img.jpg";
 import { auth } from "../../firebase";
@@ -30,6 +30,11 @@ const LoginPage = () => {
   console.log("setLoading:", setLoading);
   const [result, setResult] = useState<ConfirmationResult | null>(null);
   const [user, setUser] = useState<UserCredential | undefined>();
+ 
+
+
+
+
 
   const googleProvider = new GoogleAuthProvider();
   const facebookProvider = new FacebookAuthProvider();
@@ -73,19 +78,18 @@ const LoginPage = () => {
           },
         }
       );
-      reCaptcha.render();
+      reCaptcha.render()
       console.log("reCaptcha:", reCaptcha);
-      signInWithPhoneNumber(auth, newPhoneNumber, reCaptcha)
-        .then((confirmationResult) => {
-          console.log("confirmationResult:", confirmationResult);
-          setVerificationId(confirmationResult.verificationId);
-          alert("OTP sent!");
-          setResult(confirmationResult); // user is set
-        })
-        .catch((err) => {
-          reCaptcha.clear();
-          console.log("err:", err);
-        });
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        newPhoneNumber,
+        reCaptcha
+      );
+      console.log("confirmationResult:", confirmationResult);
+      setVerificationId(confirmationResult.verificationId);
+      alert("OTP sent!");
+      setResult(confirmationResult); // user is set
+      reCaptcha.clear()
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again.");
@@ -106,6 +110,11 @@ const LoginPage = () => {
       toast.error("Invalid OTP");
     }
   };
+
+
+
+ 
+
 
   return (
     <Box
