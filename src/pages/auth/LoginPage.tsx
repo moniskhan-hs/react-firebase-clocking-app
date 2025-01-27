@@ -16,7 +16,7 @@ import {
   signInWithPopup,
   UserCredential,
 } from "firebase/auth";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import toast from "react-hot-toast";
 import loginImage from "../../assets/MHD_Login_img.jpg";
 import { auth } from "../../firebase";
