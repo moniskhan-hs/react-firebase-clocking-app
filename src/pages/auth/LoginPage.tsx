@@ -14,8 +14,10 @@ import {
   RecaptchaVerifier,
   signInWithPhoneNumber,
   signInWithPopup,
+  UserCredential,
 } from "firebase/auth";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import loginImage from "../../assets/MHD_Login_img.jpg";
 import { auth } from "../../firebase";
 
@@ -23,12 +25,12 @@ const LoginPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [verificationId, setVerificationId] = useState("");
-  console.log('verificationId:', verificationId)
+  console.log("verificationId:", verificationId);
   const [loading, setLoading] = useState(false);
-  console.log('setLoading:', setLoading)
-  const [step, setStep] = useState(1);
-  console.log('setStep:', setStep)
-  const [user, setUser] = useState<ConfirmationResult | null>(null);
+  console.log("setLoading:", setLoading);
+  const [result, setResult] = useState<ConfirmationResult | null>(null);
+  const [user, setUser] = useState<UserCredential | undefined>();
+
   const googleProvider = new GoogleAuthProvider();
   const facebookProvider = new FacebookAuthProvider();
 
@@ -52,13 +54,13 @@ const LoginPage = () => {
 
   const sendOtp = async () => {
     const newPhoneNumber = phoneNumber.startsWith("+")
-    ? phoneNumber
-    : `+91${phoneNumber.trim()}`;
+      ? phoneNumber
+      : `+91${phoneNumber.trim()}`;
 
-  if (!/^\+?[1-9]\d{1,14}$/.test(newPhoneNumber)) {
-    alert("Invalid phone number format.");
-    return;
-  }
+    if (!/^\+?[1-9]\d{1,14}$/.test(newPhoneNumber)) {
+      alert("Invalid phone number format.");
+      return;
+    }
 
     try {
       const reCaptcha = new RecaptchaVerifier(
@@ -69,20 +71,19 @@ const LoginPage = () => {
           callback: (response: string) => {
             console.log("reCAPTCHA verified:", response);
           },
-        },
-     
+        }
       );
       reCaptcha.render();
-      console.log('reCaptcha:', reCaptcha)
+      console.log("reCaptcha:", reCaptcha);
       const confirmationResult = await signInWithPhoneNumber(
         auth,
         newPhoneNumber,
         reCaptcha
       );
-      console.log('confirmationResult:', confirmationResult)
+      console.log("confirmationResult:", confirmationResult);
       setVerificationId(confirmationResult.verificationId);
       alert("OTP sent!");
-      setUser(confirmationResult);
+      setResult(confirmationResult); // user is set
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again.");
@@ -92,8 +93,10 @@ const LoginPage = () => {
   // Verify OTP
   const verifyOtp = async () => {
     try {
-      const userLoginSuccess = await user?.confirm(otp);
+      const userLoginSuccess = await result?.confirm(otp);
       console.log("userLoginSuccess:", userLoginSuccess);
+      toast.success("user login successfully");
+      setUser(userLoginSuccess)
     } catch (error) {
       console.log("error:", error);
     }
@@ -189,7 +192,10 @@ const LoginPage = () => {
               Phone Authentication
             </Typography>
 
-            {step === 1 ? (
+            {user ? (
+              <Typography>User login Successfully</Typography>
+            ) : !result ? (
+              // send OTP to user
               <>
                 <TextField
                   label="Phone Number"
@@ -201,11 +207,6 @@ const LoginPage = () => {
                   placeholder="+91-1234 567890"
                 />
 
-                {/* <PhoneInput
-                  country={"auto"}
-                  value={phoneNumber}
-                  onChange={() => setPhoneNumber("+" + phoneNumber)}
-                /> */}
                 <Button
                   variant="contained"
                   color="primary"
