@@ -170,7 +170,7 @@ const LoginPage = () => {
   const handleSendLoginLink = async () => {
     try {
       const actionCodeSettings = {
-        url: "https://react-firebase-clocking-app.vercel.app", 
+        url: "https://react-firebase-clocking-app.vercel.app/login", 
         handleCodeInApp: true,
       };
   
