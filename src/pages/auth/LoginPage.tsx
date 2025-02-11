@@ -18,7 +18,7 @@ import {
   signInWithEmailLink,
   signInWithPhoneNumber,
   signInWithPopup,
-  UserCredential,
+  UserCredential
 } from "firebase/auth";
 import { OAuthProvider } from "firebase/auth/web-extension";
 import { useEffect, useState } from "react";
@@ -32,12 +32,14 @@ const LoginPage = () => {
   const [verificationId, setVerificationId] = useState("");
   console.log("verificationId:", verificationId);
   const [loading, setLoading] = useState(false);
-  console.log('setLoading:', setLoading)
+  console.log("setLoading:", setLoading);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [singleEmail, setSingleEmail] = useState( window.localStorage.getItem("emailForSignIn") || "");
+  const [singleEmail, setSingleEmail] = useState(
+    window.localStorage.getItem("emailForSignIn") || ""
+  );
 
   const [result, setResult] = useState<ConfirmationResult | null>(null);
   const [user, setUser] = useState<UserCredential | undefined>();
@@ -121,18 +123,38 @@ const LoginPage = () => {
   };
 
   const loginWithMicrosoft = async () => {
-    try {
-      // microsoftProvider.setCustomParameters({
-      //   tenant: "23d45b26-0876-4494-bfb8-369aecda8e1a",
-      // });
+    // console.log("auth:", auth);
+    // try {
+    //   // microsoftProvider.setCustomParameters({
+    //   //   tenant: "23d45b26-0876-4494-bfb8-369aecda8e1a",
+    //   // });
 
-      const result = await signInWithPopup(auth, microsoftProvider);
-      console.log("Microsoft Login Success:", result.user);
-      toast.success(`Welcome, ${result.user.displayName}!`);
-    } catch (error:unknown) {
-      console.error("Error during Microsoft login:", error);
-      // toast.error(`Login Failed: ${error.message}`);
-    }
+    //   const result = await signInWithPopup(auth, microsoftProvider);
+    //   console.log("Microsoft Login Success:", result.user);
+    //   toast.success(`Welcome, ${result.user.displayName}!`);
+    // } catch (error:unknown) {
+    //   console.error("Error during Microsoft login:", error.message);
+    //   // toast.error(`Login Failed: ${error.message}`);
+    // }
+
+    signInWithPopup(auth, microsoftProvider)
+    .then((result) => {
+      // User is signed in.
+      // IdP data available in result.additionalUserInfo.profile.
+  
+      // Get the OAuth access token and ID Token
+      const credential = OAuthProvider.credentialFromResult(result);
+      const accessToken = credential?.accessToken;
+      console.log('accessToken:', accessToken)
+      const idToken = credential?.idToken;
+      console.log('idToken:', idToken)
+    })
+    .catch((error) => {
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
+      console.error("Full error:", error);
+      // Handle error.
+    });
   };
 
   const loginwithEmailAndPassword = () => {
@@ -148,13 +170,12 @@ const LoginPage = () => {
       })
       .catch((error) => {
         const errorCode = error.code;
-        console.log('errorCode:', errorCode)
+        console.log("errorCode:", errorCode);
         const errorMessage = error.message;
-        console.log('errorMessage:', errorMessage)
+        console.log("errorMessage:", errorMessage);
         console.log("error:", error);
       });
   };
-
 
   useEffect(() => {
     // Get the saved email
@@ -163,17 +184,17 @@ const LoginPage = () => {
     // Verify the user went through an email link and the saved email is not null
     if (isSignInWithEmailLink(auth, window.location.href) && !!saved_email) {
       // Sign the user in
-    signInWithEmailLink( auth, saved_email, window.location.href);
+      signInWithEmailLink(auth, saved_email, window.location.href);
     }
   }, []);
 
   const handleSendLoginLink = async () => {
     try {
       const actionCodeSettings = {
-        url: "https://react-firebase-clocking-app.vercel.app/login", 
+        url: "https://react-firebase-clocking-app.vercel.app/login",
         handleCodeInApp: true,
       };
-  
+
       await sendSignInLinkToEmail(auth, singleEmail, actionCodeSettings);
       toast.success("Login link sent to your email!");
       window.localStorage.setItem("emailForSignIn", singleEmail);
@@ -182,34 +203,38 @@ const LoginPage = () => {
       toast.error("Failed to send login link. Please try again.");
     }
   };
-  
+
   const handleLoginWithLink = async () => {
     try {
       // Check if the current URL is a valid email login link
       if (isSignInWithEmailLink(auth, window.location.href)) {
         // Retrieve the email from localStorage
         const email = window.localStorage.getItem("emailForSignIn");
-  
+
         if (!email) {
           toast.error("Please provide your email to complete the login.");
           return;
         }
-  
+
         // Complete the login process
-        const result = await signInWithEmailLink(auth, email, window.location.href);
+        const result = await signInWithEmailLink(
+          auth,
+          email,
+          window.location.href
+        );
         console.log("Logged in user:", result.user);
         toast.success("Login successful!");
-  
+
         // Clear the email from localStorage
         window.localStorage.removeItem("emailForSignIn");
-  
+
         // Redirect the user to the desired page
         window.location.href = "/dashboard"; // Replace with your desired route
       }
     } catch (error) {
       console.error("Error logging in:", error);
       toast.error("Failed to log in. Please try again.");
-  
+
       // Handle specific errors
       // if (error.code === "auth/invalid-action-code") {
       //   toast.error("The login link is invalid or expired. Please request a new link.");
