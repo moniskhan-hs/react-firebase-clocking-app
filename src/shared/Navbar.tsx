@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Logout } from "@mui/icons-material";
 import {
   AppBar,
@@ -27,6 +28,13 @@ import {
 import { setUser, userExist, userNotExist } from "../redux/reducers/user";
 import { convertIntohoursAndMinuts } from "../utils/features";
 
+// type Props = {
+//   userDetails :{
+//     name:string;
+//     email:string;
+//   }
+// }
+
 const Navbar = () => {
   const [isDailogOpen, setIsDailogOpen] = useState(false);
   const { totalClocking } = useSelector(
@@ -39,6 +47,7 @@ const Navbar = () => {
   const { user } = useSelector(
     (state: { userReducer: UserReducerInitState }) => state.userReducer
   );
+  console.log('user:', user)
   const dispatch = useDispatch();
 
   // --------------------------------- Timer -----------------------------------------
@@ -112,6 +121,7 @@ const Navbar = () => {
       // toast.error("Sign in Fail");
     }
   };
+  console.log('handleLoginWithFirebaseGoogle:', handleLoginWithFirebaseGoogle)
 
   //  ----------------------- Handle for logout-------------------
 
@@ -131,6 +141,8 @@ const Navbar = () => {
       // toast.error("sign out failed")
     }
   };
+  console.log('handleLogout:', handleLogout)
+
   //------------------------------- Handle to store the data in firebase---------------------------------
 
   //  Should be called when new user is login - to make instance
@@ -212,7 +224,10 @@ const Navbar = () => {
               <span> {convertIntohoursAndMinuts(counter)} </span>
 
               {/* ---------------------  user avatar ---------------------- */}
-              {user ? (
+              {/* {user ? 
+              
+              // -------------------- if user is there [Show Avatar ]
+              (
                 <>
                   <Avatar
                     sx={{ bgcolor: "white", color: "black", cursor: "pointer" }}
@@ -233,14 +248,38 @@ const Navbar = () => {
                     </IconButton>
                   </dialog>
                 </>
-              ) : (
+              ) 
+              // ----------------------Show login button
+              :
+               (
                 <Typography
                   sx={{ color: "white", cursor: "pointer" }}
                   onClick={handleLoginWithFirebaseGoogle}
                 >
                   Login
                 </Typography>
-              )}
+              )} */}
+
+
+<>
+                  <Avatar
+                    sx={{ bgcolor: "white", color: "black", cursor: "pointer" }}
+                    src={''}
+                  />
+                  <dialog
+                    open={isDailogOpen}
+                    style={{
+                      position: "absolute",
+                      top: "80%",
+                      zIndex: 1,
+                      left: "calc(100% - 50px)",
+                    }}
+                  >
+                    <IconButton>
+                      <Logout />
+                    </IconButton>
+                  </dialog>
+                </>
             </Stack>
           </Container>
         </Toolbar>

@@ -3,6 +3,7 @@ import { getDatabase, onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import NotLogin from "./components/NotLogin";
 import { auth } from "./firebase";
 import useGetuser from "./hooks/useGetuser";
 import { useHandleBeforeUnload } from "./hooks/usehandleBeforeHook";
@@ -15,7 +16,7 @@ const App = () => {
   useHandleBeforeUnload();
   useGetuser()
   const [users, setUsers] = useState();
-
+  
   useEffect(() => {
     // user = firebase retured user
     onAuthStateChanged(auth, async (user) => {
@@ -42,15 +43,16 @@ const App = () => {
     return () => unsubscribe();
   }, []);
 
+  const userDetails = {
+    name:'monis khan',
+    email :'something@gmail.com'
+  }
 
-
-
-  
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+         <Route path="/" element={ userDetails.name && userDetails.email ? <Home />:<NotLogin />} />
         <Route path="/admin" element={<AdminHome users={users} />} />
         <Route path="/task/:id" element={<SingleTaskPage />} />
         <Route path="/login" element={<LoginPage />} />

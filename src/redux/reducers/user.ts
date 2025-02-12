@@ -24,9 +24,9 @@ export const userReducer = createSlice({
             state.loading = false;
             state.user!.tasks = action.payload
         },
-        setUser:(state,action:PayloadAction<User>)=>{
+        setUser: (state, action: PayloadAction<User>) => {
             // const previousId = state.user?.id || ""; // Retain the previous `id`
-  
+
             // Update the state with the new user data, keeping the previous `id`
             // state.user = {
             //   ...action.payload, // Merge the new user data as-is
@@ -34,7 +34,7 @@ export const userReducer = createSlice({
             //                       // Retain the previous `id`
             // };
 
-state.user = action.payload
+            state.user = action.payload
 
         }
 
@@ -42,4 +42,4 @@ state.user = action.payload
     }
 });
 
-export const { userExist, userNotExist,userTaskUpdated,setUser } = userReducer.actions
+export const { userExist, userNotExist, userTaskUpdated, setUser } = userReducer.actions
